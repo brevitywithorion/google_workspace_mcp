@@ -2892,8 +2892,10 @@ async def copy_drive_file(
     else:
         copy_body["name"] = f"Copy of {original_name}"
 
-    if resolved_folder_id != "root":
-        copy_body["parents"] = [resolved_folder_id]
+    # files.copy inherits the source parent when parents is omitted, so a
+    # shared-drive file would be copied into that drive. The root alias is a
+    # valid parent and is what places the copy in My Drive.
+    copy_body["parents"] = [resolved_folder_id]
 
     copied_file = await asyncio.to_thread(
         service.files()
